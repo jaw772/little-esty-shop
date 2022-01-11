@@ -1,0 +1,9 @@
+<%= form_with model: @merchant, local: true do |form| %>
+  <%= form.label "Username:" %>
+  <%= form.text_field :username %><br>
+  <%= form.label "Password:" %>
+  <%= form.text_field :password %><br>
+  <%= form.label "Merchant Name:" %>
+  <%= form.text_field :name %><br>
+  <%= form.submit %>
+<% end %>
