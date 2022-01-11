@@ -7,13 +7,10 @@ class MerchantsController < ApplicationController
     @merchant = Merchant.create()
   end
   def create
-    # binding.pry
-    merchant = Merchant.create!(merchant_params)
-    redirect_to '/', notice: "Welcome #{merchant.username}!"
   end
   private
 
   def merchant_params
-    params.require(:merchant).permit(:username, :password_digest, :name)
+    params.require(:merchant).permit(:name)
   end
 end
