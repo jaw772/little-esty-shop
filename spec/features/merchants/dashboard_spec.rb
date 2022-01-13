@@ -131,7 +131,7 @@ RSpec.describe 'merchant dashboard' do
       expect(page).to have_link("View Discounts")
       click_link ("View Discounts")
       expect(current_path).to eq("/merchants/#{merchant.id}/discounts")
-      expect(page).to have_content("Percentage Discount: 30%")
+      expect(page).to have_content("Percentage Discount: 30.0%")
       expect(page).to have_content("Quantity Threshold: 30")
       expect(page).to have_link("30 For 30")
     end
