@@ -135,5 +135,15 @@ RSpec.describe 'merchant dashboard' do
       expect(page).to have_content("Quantity Threshold: 30")
       expect(page).to have_link("30 For 30")
     end
+
+    it 'has a link to create a new discount' do
+      merchant = create(:merchant)
+
+      visit "/merchants/#{merchant.id}/dashboard"
+
+      expect(page).to have_link("Create a new discount")
+      click_link ("Create a new discount")
+      expect(current_path).to eq("/merchants/#{merchant.id}/discounts/new")
+    end 
   end
 end
