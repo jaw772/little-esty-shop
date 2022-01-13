@@ -9,8 +9,18 @@ class MerchantDiscountsController < ApplicationController
     @discount = Discount.find(params[:id])
   end
 
-  def create
+  def new
     @discount = Discount.create()
   end
-  
+
+  def create
+    @merchant = Merchant.find(params[:merchant_id])
+    @discount = Discount.create(discount_params)
+  end
+
+  private
+
+  def discount_params
+    params.require(:discount).permit(:name, :discount_rate, :threshold_quantity)
+  end 
 end
