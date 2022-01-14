@@ -8,12 +8,12 @@ RSpec.describe "Merchant Discounts Edit page" do
 
     visit "/merchants/#{merchant.id}/discounts/#{discount.id}"
     click_on "Update #{discount.name}"
-    expect(current_path).to eq("/merchants/#{merchant.id}/discounts/#{discount1.id}/edit")
+    expect(current_path).to eq("/merchants/#{merchant.id}/discounts/#{discount.id}/edit")
     expect(page).to have_field(:discount_discount_rate, with: 0.3)
 
     fill_in 'discount_discount_rate', with: 0.35
     click_on 'Update Discount'
-    expect(current_path).to eq("/merchants/#{merchant.id}/discounts/#{discount1.id}")
+    expect(current_path).to eq("/merchants/#{merchant.id}/discounts/#{discount.id}")
     #checking for flash message
     expect(page).to have_content("Discount Successfully Updated")
   end
