@@ -49,9 +49,9 @@ class Merchant < ApplicationRecord
     Merchant.all.where(status: 0)
   end
 
-  def items_ready_to_ship
-    items.joins(:invoice_items => :invoice)
-          .where.not(:invoice_items => {status: 2})
+  def invoice_items_ready_to_ship
+    invoice_items.joins(:invoice)
+          .where.not(status: 2)
           .order("invoices.created_at asc")
           # this needs to be distinct. If there are two identical items with duplicate invoices and invoice items it repeats.
   end
@@ -90,5 +90,15 @@ class Merchant < ApplicationRecord
     .select("invoices.created_at, sum(invoice_items.quantity * invoice_items.unit_price) AS revenue")
     .order(revenue: :desc)
     .first.created_at
+  end
+
+  def successful_transactions
+    transactions.where(result: 0).distinct.count
+  end
+
+  def total_revenue
+    invoice_items.joins(:transactions)
+    .where(transactions: {result: 0})
+    .sum("invoice_items.quantity * invoice_items.unit_price")
   end
 end

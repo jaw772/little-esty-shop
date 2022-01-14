@@ -7,6 +7,15 @@
 
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <!-- <div class="facade">
+       #facade = HeaderFacade.new %>
+      <p> #{}"GitHub Repository: #{facade.repo}" %> </p>
+       #facade.contributors.each do |contributor| %>
+        <p> #{}"Contributor: #{contributor.username}" %></p>
+        <p> #{}"Commits: #{contributor.commits}" %></p>
+       #end %>
+      <p> #{}"Total Pull Requests Closed: #{facade.pulls.first.number}" %></p>
+    </div> -->
   </head>
 
   <body>
@@ -16,5 +25,7 @@
       <% end %>
     </div>
     <%= yield %>
+
+
   </body>
 </html>

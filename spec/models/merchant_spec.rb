@@ -84,29 +84,32 @@ RSpec.describe Merchant, type: :model do
         expect(merchant.top_customers(5)).to eq([customer_3, customer_1, customer_5, customer_2, customer_4])
         expect(merchant.top_customers(6)).to eq([customer_3, customer_1, customer_5, customer_2, customer_4])
       end
+    end
 
-      describe 'items_ready_to_ship' do
-        it "returns a list of all items with an invoice_item status of 0 or 1" do
-          merchant = create(:merchant)
-          item_1 = create(:item_with_invoices, merchant: merchant, invoice_item_status: 0)
-          item_2 = create(:item_with_invoices, merchant: merchant, invoice_item_status: 1)
-          item_3 = create(:item_with_invoices, merchant: merchant, invoice_item_status: 1)
-          item_4 = create(:item_with_invoices, merchant: merchant, invoice_item_status: 2)
+    describe 'items_ready_to_ship' do
+      it "returns a list of all invoice_items with status of 0 or 1 ordered by the invoice created_at date" do
+        merchant = create(:merchant)
+        item_1 = create(:item, merchant: merchant)
+        item_2 = create(:item, merchant: merchant)
+        invoice_item_1 = create(:invoice_item, item: item_1, status: 0)
+        invoice_item_2 = create(:invoice_item, item: item_1, status: 1)
+        invoice_item_3 = create(:invoice_item, item: item_2, status: 1)
+        invoice_item_4 = create(:invoice_item, item: item_1, status: 2)
 
-          expect(merchant.items_ready_to_ship).to eq([item_1, item_2, item_3])
-        end
+        expect(merchant.invoice_items_ready_to_ship).to eq([invoice_item_1, invoice_item_2, invoice_item_3])
+      end
 
-        it "returns items in descending order based on created_at date" do
-          merchant = create(:merchant)
-          invoice_1 = create(:invoice, created_at: Date.new(2022, 4, 20))
-          invoice_2 = create(:invoice, created_at: Date.new(2022, 1, 12))
-          invoice_3 = create(:invoice, created_at: Date.new(2022, 3, 2))
-          item_1 = create(:item_with_invoices, merchant: merchant, invoices: [invoice_1])
-          item_2 = create(:item_with_invoices, merchant: merchant, invoices: [invoice_2])
-          item_3 = create(:item_with_invoices, merchant: merchant, invoices: [invoice_3])
+      it "returns items in descending order based on created_at date" do
+        merchant = create(:merchant)
+        invoice_1 = create(:invoice, created_at: Date.new(2022, 4, 20))
+        invoice_2 = create(:invoice, created_at: Date.new(2022, 1, 12))
+        invoice_3 = create(:invoice, created_at: Date.new(2022, 3, 2))
+        item_1 = create(:item, merchant: merchant)
+        invoice_item_1 = create(:invoice_item, item: item_1, invoice: invoice_1)
+        invoice_item_2 = create(:invoice_item, item: item_1, invoice: invoice_2)
+        invoice_item_3 = create(:invoice_item, item: item_1, invoice: invoice_3)
 
-          expect(merchant.items_ready_to_ship).to eq([item_2, item_3, item_1])
-        end
+        expect(merchant.invoice_items_ready_to_ship).to eq([invoice_item_2, invoice_item_3, invoice_item_1])
       end
     end
 
@@ -147,6 +150,40 @@ RSpec.describe Merchant, type: :model do
         invoice_3 = create(:invoice, created_at: DateTime.new(2022, 1, 12, 1, 1, 1))
         item_3 = create(:item_with_transactions, merchant: merchant, name: "Toy", invoice: invoice_3, invoice_item_quantity: 5, invoice_item_unit_price: 100000)
         expect(merchant.best_day).to eq(DateTime.new(2022, 1, 12, 1, 1, 1))
+      end
+    end
+
+    describe "successful_transactions" do
+      it "returns the count of successful transactions" do
+        merchant_1 = create(:merchant_with_transactions, transaction_count: 5, transaction_result: 0)
+        merchant_2 = create(:merchant_with_transactions, transaction_count: 5, transaction_result: 1)
+
+        expect(merchant_1.successful_transactions).to eq(5)
+        expect(merchant_2.successful_transactions).to eq(0)
+
+        # create transactions that should nto show up.
+        merchant_3 = create(:merchant_with_transactions, transaction_count: 5, transaction_result: 1)
+        merchant_3.items.update(merchant: merchant_1)
+
+        expect(merchant_1.successful_transactions).to eq(5)
+      end
+    end
+
+    describe 'total_revenue' do
+      it "returns total revenue of all successful transactions" do
+        merchant_1 = create(:merchant_with_transactions, name: 'Zach', invoice_item_quantity: 3, invoice_item_unit_price: 100000)
+
+        expect(merchant_1.total_revenue).to eq(300000)
+
+        # Create new items to test top_merchants across multiple invoices for one merchant.
+        # Test with invalid transaction.
+        new_items = create(:item_with_transactions, merchant: merchant_1, invoice_item_quantity: 15, invoice_item_unit_price: 100000, transaction_result: 1)
+
+        expect(merchant_1.total_revenue).to eq(300000)
+
+        # Test with valid transaction.
+        new_items = create(:item_with_transactions, merchant: merchant_1, invoice_item_quantity: 15, invoice_item_unit_price: 100000, transaction_result: 0)
+        expect(merchant_1.total_revenue).to eq(1800000)
       end
     end
   end
