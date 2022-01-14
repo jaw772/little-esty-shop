@@ -12,4 +12,13 @@ RSpec.describe "Merchant Discounts Show page" do
     expect(page).to have_content("Percentage Discount: 30.0%")
     expect(page).to have_content("Quantity Threshold: 30")
   end
-end 
+
+  it 'has a link to update the discount' do
+    merchant = create(:merchant)
+    discount = create(:discount, merchant: merchant, discount_rate: 0.3, threshold_quantity: 30, name: "30 For 30")
+
+    visit "/merchants/#{merchant.id}/discounts/#{discount.id}"
+
+    expect(page).to have_link("Update #{discount.name}")
+  end 
+end

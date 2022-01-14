@@ -2,3 +2,4 @@
 
 <h3>Percentage Discount: <%= 100 * @discount.discount_rate %>%</h3>
 <h3>Quantity Threshold: <%= @discount.threshold_quantity %></h3>
+<%= link_to "Update #{@discount.name}", "/merchants/#{@merchant.id}/discounts/#{@discount.id}/edit" %>
