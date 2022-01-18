@@ -51,4 +51,19 @@ RSpec.describe InvoiceItem, type: :model do
       end
     end
   end
+
+  describe 'instance methods' do
+    describe '#find_discount' do
+      it 'returns the best discount available for a given invoice_item' do
+        merchant_1 = create(:merchant)
+        invoice_1 = create(:invoice)
+        transaction = create(:transaction, invoice: invoice_1, result: 0)
+        discount_1 = create(:discount, merchant: merchant_1, threshold_quantity: 10, discount_rate: 0.1)
+        discount_2 = create(:discount, merchant: merchant_1, threshold_quantity: 20, discount_rate: 0.2)
+        invoice_item_1 = create(:invoice_item, quantity: 22, invoice: invoice_1)
+
+        expect(invoice_item_1.find_discount(merchant_1)).to eq(discount_2)
+      end
+    end
+  end
 end
