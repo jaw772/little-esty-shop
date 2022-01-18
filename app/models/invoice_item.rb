@@ -13,4 +13,9 @@ class InvoiceItem < ApplicationRecord
     InvoiceItem.joins(invoice: :transactions).where(transactions: {result: 0})
     .sum("invoice_items.quantity * invoice_items.unit_price")
   end
+
+  def find_discount(merchant)
+    Discount.where("merchant_id = #{merchant.id}" && "threshold_quantity < #{self.quantity}").order(discount_rate: :desc).first
+  end
+
 end
