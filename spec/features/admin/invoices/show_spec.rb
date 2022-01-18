@@ -81,7 +81,7 @@ RSpec.describe 'Admin_Invoices Show Page' do
     end
   end
 
-  it 'calculates the potential revenue of the invoice' do
+  it 'calculates the revenue of the invoice' do
     merchant = create(:merchant)
     invoice = create(:invoice)
     item = create(:item_with_invoices, merchant: merchant, invoices: [invoice], invoice_item_unit_price: 3000, invoice_item_quantity: 8)
@@ -90,7 +90,7 @@ RSpec.describe 'Admin_Invoices Show Page' do
 
     visit "/admin/invoices/#{invoice.id}"
 
-    expect(page).to have_content("Total Potential Revenue")
+    expect(page).to have_content("Total Revenue")
     expect(page).to have_content("$440.00")
   end
 
@@ -114,5 +114,24 @@ RSpec.describe 'Admin_Invoices Show Page' do
       expect(current_path).to eq("/admin/invoices/#{invoice.id}")
       expect(page).to have_field(:status, with: "shipped")
     end
+  end
+
+  it 'shows the total revenue from this invoice and the total discounted revenue' do
+    merchant_1 = create(:merchant)
+    merchant_2 = create(:merchant)
+    invoice_1 = create(:invoice)
+    item_1 = create(:item_with_invoices, merchant: merchant_1, invoices: [invoice_1], invoice_item_unit_price: 10000, invoice_item_quantity: 12)
+    item_2 = create(:item_with_invoices, merchant: merchant_2, invoices: [invoice_1], invoice_item_unit_price: 20000, invoice_item_quantity: 22)
+    transaction = create(:transaction, invoice: invoice_1, result: 0)
+    discount_1 = create(:discount, merchant: merchant_1, threshold_quantity: 10, discount_rate: 0.1)
+    discount_2 = create(:discount, merchant: merchant_2, threshold_quantity: 20, discount_rate: 0.2)
+
+    visit "/admin/invoices/#{invoice_1.id}"
+    expect(page).to have_content("Total Revenue")
+    expect(page).to have_content("$5,600.00")
+    expect(page).to have_content("Total Discounts")
+    expect(page).to have_content("($1,000.00)")
+    expect(page).to have_content("Total Discounted Revenue")
+    expect(page).to have_content("$4,600.00")
   end
 end
