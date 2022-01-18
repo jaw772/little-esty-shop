@@ -15,7 +15,7 @@ class InvoiceItem < ApplicationRecord
   end
 
   def find_discount(merchant)
-    Discount.where("merchant_id = #{merchant.id}" && "threshold_quantity < #{self.quantity}").order(discount_rate: :desc).first
+    Discount.where("merchant_id = #{merchant.id}" && "threshold_quantity <= #{self.quantity}").order(discount_rate: :desc).first
   end
 
 end
