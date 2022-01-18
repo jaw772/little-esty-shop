@@ -132,12 +132,11 @@ RSpec.describe 'merchants invoice show page' do
     merchant_1 = create(:merchant)
     invoice_1 = create(:invoice)
     item_1 = create(:item_with_invoices, merchant: merchant_1, invoices: [invoice_1], invoice_item_unit_price: 10000, invoice_item_quantity: 12)
-    item_2 = create(:item_with_invoices, merchant: merchant_1, invoices: [invoice_1], invoice_item_unit_price: 20000, invoice_item_quantity: 22)
+    item_2 = create(:item_with_invoices, merchant: merchant_1, invoices: [invoice_1], invoice_item_unit_price: 20000, invoice_item_quantity: 8)
     transaction = create(:transaction, invoice: invoice_1, result: 0)
     discount_1 = create(:discount, merchant: merchant_1, threshold_quantity: 10, discount_rate: 0.1, name: "10 for 10")
 
     visit "/merchants/#{merchant_1.id}/invoices/#{invoice_1.id}"
-
     expect(page).to have_link("10 for 10")
-  end 
+  end
 end
