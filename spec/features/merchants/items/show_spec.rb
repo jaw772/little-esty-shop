@@ -30,9 +30,4 @@ RSpec.describe 'Merchant Items Show page' do
     expect(page).to have_content("Item Successfully Updated")
   end
 
-  it 'shows the total revenue from this invoice and the total discounted revenue' do
-    merchant_1 = create(:merchant)
-    item_1 = create(:item, merchant: merchant_1, unit_price: 77777)
-    visit "/merchants/#{merchant_1.id}/items/#{item_1.id}"
-
 end

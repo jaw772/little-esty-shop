@@ -83,5 +83,16 @@ RSpec.describe Invoice, type: :model do
         expect(invoice1.revenue_by_merchant(merchant_2)).to eq(100000)
       end
     end
+
+    describe '#discounted_revenue' do
+      it 'returns a value of the revenue * discount_rate' do
+        merchant_1 = create(:merchant)
+        invoice_1 = create(:invoice)
+        item_1 = create(:item_with_invoices, merchant: merchant_1, invoices: [invoice_1], invoice_item_unit_price: 10000, invoice_item_quantity: 12)
+        transaction = create(:transaction, invoice: invoice_1, result: 0)
+        discount_1 = create(:discount, merchant: merchant_1, threshold_quantity: 10, discount_rate: 0.1)
+        expect(invoice_1.discounted_revenue(merchant_1)).to eq(12000)
+      end
+    end 
   end
 end
