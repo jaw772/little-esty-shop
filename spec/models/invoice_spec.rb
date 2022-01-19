@@ -93,6 +93,25 @@ RSpec.describe Invoice, type: :model do
         discount_1 = create(:discount, merchant: merchant_1, threshold_quantity: 10, discount_rate: 0.1)
         expect(invoice_1.discounted_revenue(merchant_1)).to eq(12000)
       end
+
+      it 'returns 0 if the merchant has no discounts' do
+        merchant_1 = create(:merchant)
+        invoice_1 = create(:invoice)
+        item_1 = create(:item_with_invoices, merchant: merchant_1, invoices: [invoice_1], invoice_item_unit_price: 10000, invoice_item_quantity: 12)
+        transaction = create(:transaction, invoice: invoice_1, result: 0)
+
+        expect(invoice_1.discounted_revenue(merchant_1)).to eq(0)
+      end
+
+      it 'returns 0 if the item quantity does not meet the discounts threshold' do
+        merchant_1 = create(:merchant)
+        invoice_1 = create(:invoice)
+        item_1 = create(:item_with_invoices, merchant: merchant_1, invoices: [invoice_1], invoice_item_unit_price: 10000, invoice_item_quantity: 9)
+        transaction = create(:transaction, invoice: invoice_1, result: 0)
+        discount_1 = create(:discount, merchant: merchant_1, threshold_quantity: 10, discount_rate: 0.1)
+        expect(invoice_1.discounted_revenue(merchant_1)).to eq(0)
+      end
+
     end
 
     describe '#admin_discounted_revenue' do
