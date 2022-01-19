@@ -23,4 +23,12 @@ RSpec.describe "Merchant Discounts Index page" do
     click_on("Delete")
     expect(page).to_not have_content("30 For 30")
   end
-end 
+
+  it 'displays a section with a header of the next 3 upcoming holidays' do
+    visit "/merchants/#{merchant.id}/discounts/"
+
+    expect(page).to have_content("Valentine's Day")
+    expect(page).to have_content("St. Patricks Day")
+    expect(page).to have_content("Easter")
+  end 
+end
