@@ -124,8 +124,11 @@ RSpec.describe 'merchants invoice show page' do
 
     visit "/merchants/#{merchant_1.id}/invoices/#{invoice_1.id}"
     expect(page).to have_content("$5,600.00")
-    expect(page).to have_content("Total Discounted Revenue")
+    expect(page).to have_content("Total Discounts")
     expect(page).to have_content("($1,000.00)")
+    expect(page).to have_content("Total Discounted Revenue")
+    expect(page).to have_content("$4,600.00")
+
   end
 
   it 'displays a link to the discount that was applied next to the item' do

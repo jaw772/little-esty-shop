@@ -27,21 +27,37 @@ class Invoice < ApplicationRecord
   end
 
   def discounted_revenue(merchant)
-    # require "pry"; binding.pry
     total = 0
     if merchant.discounts.count == 0
       total
     else
-      invoice_items.each do |inv_item|
+      merchant_invoice_items(merchant).each do |inv_item|
         discount = inv_item.find_discount(merchant)
         if discount == nil
           total
         else
-          # require "pry"; binding.pry
           total += (discount.discount_rate * (inv_item.quantity * inv_item.unit_price)).to_i
         end
       end
       total
     end
+  end
+
+  def admin_discounted_revenue
+    total = 0
+    invoice_items.each do |inv_item|
+      item = Item.find(inv_item.item_id)
+      merchant = Merchant.find(item.merchant_id)
+      total += discounted_revenue(merchant)
+    end
+    total
+  end
+
+  def admin_total_discounted_revenue
+    revenue - admin_discounted_revenue
+  end
+
+  def merchant_total_discounted_revenue(merchant)
+    revenue_by_merchant(merchant) - discounted_revenue(merchant)
   end
 end

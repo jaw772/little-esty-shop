@@ -93,6 +93,47 @@ RSpec.describe Invoice, type: :model do
         discount_1 = create(:discount, merchant: merchant_1, threshold_quantity: 10, discount_rate: 0.1)
         expect(invoice_1.discounted_revenue(merchant_1)).to eq(12000)
       end
-    end 
+    end
+
+    describe '#admin_discounted_revenue' do
+      it 'returns the total discount from all items on the invoice across different merchants' do
+        merchant_1 = create(:merchant)
+        merchant_2 = create(:merchant)
+        invoice_1 = create(:invoice)
+        item_1 = create(:item_with_invoices, merchant: merchant_1, invoices: [invoice_1], invoice_item_unit_price: 10000, invoice_item_quantity: 12)
+        item_2 = create(:item_with_invoices, merchant: merchant_2, invoices: [invoice_1], invoice_item_unit_price: 20000, invoice_item_quantity: 22)
+        transaction = create(:transaction, invoice: invoice_1, result: 0)
+        discount_1 = create(:discount, merchant: merchant_1, threshold_quantity: 10, discount_rate: 0.1)
+        discount_2 = create(:discount, merchant: merchant_2, threshold_quantity: 20, discount_rate: 0.2)
+
+        expect(invoice_1.admin_discounted_revenue).to eq(100000)
+      end
+    end
+
+    describe '#admin_total_discounted_revenue' do
+      it 'returns the total discount from all items on the invoice across different merchants' do
+        merchant_1 = create(:merchant)
+        merchant_2 = create(:merchant)
+        invoice_1 = create(:invoice)
+        item_1 = create(:item_with_invoices, merchant: merchant_1, invoices: [invoice_1], invoice_item_unit_price: 10000, invoice_item_quantity: 12)
+        item_2 = create(:item_with_invoices, merchant: merchant_2, invoices: [invoice_1], invoice_item_unit_price: 20000, invoice_item_quantity: 22)
+        transaction = create(:transaction, invoice: invoice_1, result: 0)
+        discount_1 = create(:discount, merchant: merchant_1, threshold_quantity: 10, discount_rate: 0.1)
+        discount_2 = create(:discount, merchant: merchant_2, threshold_quantity: 20, discount_rate: 0.2)
+
+        expect(invoice_1.admin_total_discounted_revenue).to eq(460000)
+      end
+    end
+
+    describe '#merchant_total_discounted_revenue' do
+      it 'returns a value of the revenue * discount_rate' do
+        merchant_1 = create(:merchant)
+        invoice_1 = create(:invoice)
+        item_1 = create(:item_with_invoices, merchant: merchant_1, invoices: [invoice_1], invoice_item_unit_price: 10000, invoice_item_quantity: 12)
+        transaction = create(:transaction, invoice: invoice_1, result: 0)
+        discount_1 = create(:discount, merchant: merchant_1, threshold_quantity: 10, discount_rate: 0.1)
+        expect(invoice_1.merchant_total_discounted_revenue(merchant_1)).to eq(108000)
+      end
+    end
   end
 end
