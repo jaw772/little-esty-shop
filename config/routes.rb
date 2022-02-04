@@ -13,14 +13,18 @@ Rails.application.routes.draw do
   scope '/admin' do
     resources :invoices, controller: 'admin_invoices'
   end
+  
+  resources :users
+  get '/users/profile', to: 'users#show'
 
   get 'merchants/:id/invoices', to: 'merchant_invoices#index'
   get 'merchants/:merchant_id/invoices/:invoice_id', to: 'merchant_invoices#show'
   patch '/merchants/:merchant_id/invoices/:invoice_id/:invoice_item_id', to: 'invoice_items#update'
-
   get '/merchants/:id/dashboard', to: 'merchants#dashboard'
 
   get '/admin', to: 'admin#dashboard'
+
+  get '/',to: 'welcome#index'
 
   patch '/admin/invoices/:invoice_id/:invoice_item_id', to: 'admin_invoice_items#update'
 end
