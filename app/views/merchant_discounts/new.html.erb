@@ -1,0 +1,11 @@
+<h1>Add a new discount for <%= @merchant.name %></h1>
+
+<%= form_with model: [@merchant, @discount] , local: true do |form| %>
+  <%= form.label :name %>
+  <%= form.text_field :name %>
+  <%= form.label :discount_rate, "Discount Rate that is less than 71%(as a decimal ex: 30% = 0.30):" %>
+  <%= form.text_field :discount_rate %>
+  <%= form.label :threshold_quantity, "Threshold Quantity:" %>
+  <%= form.text_field :threshold_quantity %>
+  <%= form.submit %>
+<% end %>

@@ -1,0 +1,16 @@
+<section>
+  <h1><%= @merchant.name %>'s Discounts'</h1>
+  <span><h3 style="white-space:nowrap; display:inline-block;">Upcoming Holidays: </h3>
+    <% @days.each do |day| %>
+      <h3 style="white-space:nowrap; display:inline-block;"> <%= day.name %>: </h3>
+      <h3 style="white-space:nowrap; display:inline-block;"> <%= day.date %></h3>
+    <% end %>
+  </span>
+</section>
+
+<% @discounts.each do |discount| %>
+  <h3>Percentage Discount: <%= 100 * discount.discount_rate %>%</h3>
+  <h3>Quantity Threshold: <%= discount.threshold_quantity %></h3>
+  <h3><%= link_to "#{discount.name}", "/merchants/#{@merchant.id}/discounts/#{discount.id}" %></h3>
+  <%= link_to "Delete", "/merchants/#{@merchant.id}/discounts/#{discount.id}", method: :delete %>
+<% end %>
