@@ -13,6 +13,8 @@ Rails.application.routes.draw do
   scope '/admin' do
     resources :invoices, controller: 'admin_invoices'
   end
+  resources :users
+  get '/users/profile', to: 'users#show'
 
   get 'merchants/:id/invoices', to: 'merchant_invoices#index'
   get 'merchants/:merchant_id/invoices/:invoice_id', to: 'merchant_invoices#show'
@@ -22,5 +24,8 @@ Rails.application.routes.draw do
 
   get '/admin', to: 'admin#dashboard'
 
+
   patch '/admin/invoices/:invoice_id/:invoice_item_id', to: 'admin_invoice_items#update'
+
+  get '/',to: 'welcome#index'
 end
